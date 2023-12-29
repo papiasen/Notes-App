@@ -1,5 +1,6 @@
 import { initializeApp } from "https://www.gstatic.com/firebasejs/9.15.0/firebase-app.js"
 import { getDatabase, ref, push, onValue, remove } from "https://www.gstatic.com/firebasejs/9.15.0/firebase-database.js"
+
 const appSettings = {
     databaseURL: "https://playing-around-17c5e-default-rtdb.europe-west1.firebasedatabase.app/"
 }
@@ -7,7 +8,6 @@ const appSettings = {
 const app = initializeApp(appSettings)
 const database = getDatabase(app)
 const notesAppinDB = ref(database, "notesList")
-
 
 const inputFieldEl = document.getElementById("input-field")
 const addButtonEl = document.getElementById("add-button")
@@ -26,7 +26,7 @@ onValue(notesAppinDB, function (snapshot) {
     if (snapshot.exists()) {
 
         let itemsArray = Object.entries(snapshot.val())
-        console.log(itemsArray)
+
 
         clearNotesList()
 
