@@ -1,79 +1,60 @@
-import { initializeApp } from "https://www.gstatic.com/firebasejs/9.15.0/firebase-app.js"
-import { getDatabase, ref, push, onValue, remove } from "https://www.gstatic.com/firebasejs/9.15.0/firebase-database.js"
+let myNotes = []
+let inputFieldEl = document.getElementById("input-field")
+const addBtn = document.getElementById("add-button")
+const deleteBtn = document.getElementById("delete-button")
+const ulEl = document.getElementById("notes-list")
+const leadsFromLocalStorage = JSON.parse(localStorage.getItem("myNotes"))
 
-const appSettings = {
-    databaseURL: "https://playing-around-17c5e-default-rtdb.europe-west1.firebasedatabase.app/"
+
+
+if (leadsFromLocalStorage) {
+    myNotes = leadsFromLocalStorage
+    render(myNotes)
 }
 
-const app = initializeApp(appSettings)
-const database = getDatabase(app)
-const notesAppinDB = ref(database, "notesList")
-
-const inputFieldEl = document.getElementById("input-field")
-const addButtonEl = document.getElementById("add-button")
-const notesList = document.getElementById("notes-list")
-
-addButtonEl.addEventListener("click", function () {
-    let inputValue = inputFieldEl.value
-    push(notesAppinDB, inputValue)
-    clearInputField()
-})
 
 
-onValue(notesAppinDB, function (snapshot) {
+function render(notes) {
+    ulEl.innerHTML = ""
+    for (let i = 0; i < notes.length; i++) {
+        const liElement = document.createElement('li')      // <li></li>
+        liElement.classList = "note-single"                 // <li class="note-single"></li>
+        liElement.innerText = notes[i]                      // <li class="note-single">bread</li>
+        ulEl.appendChild(liElement)
 
-
-    if (snapshot.exists()) {
-
-        let itemsArray = Object.entries(snapshot.val())
-
-
-        clearNotesList()
-
-        for (let i = 0; i < itemsArray.length; i++) {
-
-            let currentItem = itemsArray[i]
-
-            let currentItemID = currentItem[0]
-            let currentItemValue = currentItem[1]
-
-            notesListValues(currentItem)
-        }
-    } else {
-        notesList.innerHTML = `<p> No items here... yet </p>`
+        liElement.addEventListener('click', function () {
+            const clickedNote = notes[i];
+            // Remove the clicked note from localStorage
+            // const newNotes = myNotes.filter(note => note !== clickedNote);
+            let newNotes = []
+            for (let j = 0; j < myNotes.length; j++) {
+                if (myNotes[j] !== clickedNote) {
+                    newNotes.push(myNotes[j])
+                }
+            }
+            myNotes = newNotes
+            localStorage.setItem("myNotes", JSON.stringify(newNotes));
+            render(newNotes)
+        })
     }
+}
 
 
 
+
+
+deleteBtn.addEventListener("click", function () {
+    localStorage.clear()
+    myNotes = []
+    render(myNotes)
 })
 
 
-function clearNotesList() {
-    notesList.innerHTML = ""
-}
 
-
-function clearInputField() {
+addBtn.addEventListener("click", function () {
+    myNotes.push(inputFieldEl.value)
     inputFieldEl.value = ""
-}
 
-
-function notesListValues(item) {
-    // groceryList.innerHTML += `<li>${itemValue}</li>`
-
-    // console.log(item)
-
-    let itemID = item[0]
-    let itemValue = item[1]
-
-    let newEl = document.createElement("li")
-
-    newEl.textContent = itemValue
-
-    newEl.addEventListener("click", function () {
-        let exactLocationOfItemInDB = ref(database, `notesList/${itemID}`)
-        remove(exactLocationOfItemInDB)
-    })
-
-    notesList.append(newEl)
-}
+    localStorage.setItem("myNotes", JSON.stringify(myNotes))
+    render(myNotes)
+})
