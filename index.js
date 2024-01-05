@@ -1,7 +1,7 @@
 let myNotes = []
 let inputFieldEl = document.getElementById("input-field")
 const addBtn = document.getElementById("add-button")
-const deleteBtn = document.getElementById("delete-button")
+// const deleteBtn = document.getElementById("delete-button")
 const ulEl = document.getElementById("notes-list")
 const leadsFromLocalStorage = JSON.parse(localStorage.getItem("myNotes"))
 
@@ -43,11 +43,11 @@ function render(notes) {
 
 
 
-deleteBtn.addEventListener("click", function () {
-    localStorage.clear()
-    myNotes = []
-    render(myNotes)
-})
+// deleteBtn.addEventListener("click", function () {
+//     localStorage.clear()
+//     myNotes = []
+//     render(myNotes)
+// })
 
 
 
